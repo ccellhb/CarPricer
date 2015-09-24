@@ -1,0 +1,4 @@
+[proxy]
+server = server:port
+user = user
+password = pwd

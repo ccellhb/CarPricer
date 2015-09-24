@@ -20,9 +20,9 @@ query_list = [
               ]
 
 # THE PROXY INFO
-proxy_uri = "proxy.spdb.com:8080"
-proxy_user = "hub6"
-proxy_pwd = "abc008123123"
+proxy_uri = "url:port"
+proxy_user = "user"
+proxy_pwd = "pwd"
 
 
 proxy_info=proxy_user+':'+proxy_pwd+'@'+proxy_uri

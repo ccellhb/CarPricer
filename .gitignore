@@ -60,4 +60,5 @@ target/
 *.xls
 .settings/
 .idea
+config
 

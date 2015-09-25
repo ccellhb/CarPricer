@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-
+import configparser
 
 def my_sort(list):
-    new_list=[1,2,3,4,5]
+    new_list=[1, 2, 3, 4, 5]
     try:
         for li in list:
             if li == 'make':
@@ -27,10 +27,15 @@ def my_sort(list):
     finally:
         pass
 
+def getProxyConfig(key):
+    config = configparser.ConfigParser()
+    config.read('config')
+    return (config['proxy'][key])
    
     
 
  
 if __name__ == '__main__':
     print(my_sort(['price', 'name', 'make', 'mode', 'url']))
+    getProxyConfig("proxy_user")
   

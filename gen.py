@@ -7,7 +7,7 @@ import urllib.request, asyncio ,aiohttp
 from doxls import write_excel   
 import time
 from html.parser import HTMLParser
-
+from util import getProxyConfig
 
 # define query list
 query_list = [
@@ -19,16 +19,6 @@ query_list = [
               {'make': 'lexus', 'mode': 'nx%20200t'}
               ]
 
-# THE PROXY INFO
-proxy_uri = "url:port"
-proxy_user = "user"
-proxy_pwd = "pwd"
-
-
-proxy_info=proxy_user+':'+proxy_pwd+'@'+proxy_uri
-proxy_sever = 'http://'+proxy_uri
-proxy_handler = urllib.request.ProxyHandler({'http':proxy_info})
-urlopener = urllib.request.build_opener(proxy_handler)
 
 global list_result
 list_result = []
@@ -100,8 +90,16 @@ def getCarInfo(query_car):
     url = "http://wwwa.autotrader.ca/cars/%s/%s/on/toronto/?prx=100&prv=Ontario&loc=Toronto" \
           % (query_car['make'],query_car['mode']) + \
           "%2c+ON&body=SUV&sts=New&showcpo=1&hprc=True&wcp=True&srt=3&rcs=0&rcp=20"
-    conn = aiohttp.ProxyConnector(proxy=proxy_sever, proxy_auth=aiohttp.BasicAuth(proxy_user, proxy_pwd))
-    response = yield from  aiohttp.get(url, connector=conn)
+    if getProxyConfig("enable") == "1":
+        # THE PROXY INFO
+        proxy_uri = getProxyConfig('server')
+        proxy_user = getProxyConfig('user')
+        proxy_pwd = getProxyConfig('password')
+        proxy_sever = 'http://'+proxy_uri
+        conn = aiohttp.ProxyConnector(proxy=proxy_sever, proxy_auth=aiohttp.BasicAuth(proxy_user, proxy_pwd))
+        response = yield from aiohttp.get(url, connector=conn)
+    else:
+        response = yield from aiohttp.get(url)
     return( yield from response.text())
 
 
@@ -123,6 +121,9 @@ def execute():
 
     # write file
     print(list_result)
+    if list_result == []:
+        print("NO DATA!!")
+        return
     write_excel(list_result)
     print("gen xls completed")
 

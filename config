@@ -1,4 +1,5 @@
 [proxy]
-server = server:port
+enable = 0
+server = proxy
 user = user
 password = pwd

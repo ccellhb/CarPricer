@@ -34,7 +34,6 @@ def write_excel(l_d_par):
     
     #write the first line
     col_name_list=list(l_d_par[0].keys())
-    print(col_name_list)
     col_name_list=my_sort(col_name_list)
     for i in range(0,len(col_name_list)):
         sheet1.write(0,i,col_name_list[i],set_style('Times New Roman',220,True))
@@ -44,8 +43,10 @@ def write_excel(l_d_par):
         for j in range(0,len(col_name_list)):
             sheet1.write(i+1,j,l_d_par[i][col_name_list[j]],set_style('Times New Roman',220,True))
     
-    
-    f.save('result.xls') 
+    try:
+        f.save('result.xls')
+    except Exception  as e1:
+        print('except:', e1)
 
  
 if __name__ == '__main__':

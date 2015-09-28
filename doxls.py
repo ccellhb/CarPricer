@@ -35,14 +35,18 @@ def write_excel(l_d_par):
     #write the first line
     col_name_list=list(l_d_par[0].keys())
     col_name_list=my_sort(col_name_list)
+    print(col_name_list)
     for i in range(0,len(col_name_list)):
         sheet1.write(0,i,col_name_list[i],set_style('Times New Roman',220,True))
     
     #write the rest lines
     for i in range(0,len(l_d_par)):
         for j in range(0,len(col_name_list)):
-            sheet1.write(i+1,j,l_d_par[i][col_name_list[j]],set_style('Times New Roman',220,True))
-    
+            #if col_name_list[j] != 'pic':
+                sheet1.write(i+1,j,l_d_par[i][col_name_list[j]],set_style('Times New Roman',220,True))
+            #lse:
+              #  sheet1.insert_bitmap('a.bmp',i+1,j)
+
     try:
         f.save('result.xls')
     except Exception  as e1:

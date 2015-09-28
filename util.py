@@ -4,7 +4,7 @@
 import configparser
 
 def my_sort(list):
-    new_list=[1, 2, 3, 4, 5]
+    new_list=[1, 2, 3, 4, 5, 6]
     try:
         for li in list:
             if li == 'make':
@@ -17,6 +17,8 @@ def my_sort(list):
                 new_list[3] = li
             elif  li == 'url':
                 new_list[4] = li
+            elif  li == 'pic':
+                new_list[5] = li
             else:
                 raise FooError('invalid value: %s' % li)
     except Exception as e:
@@ -36,6 +38,5 @@ def getProxyConfig(key):
 
  
 if __name__ == '__main__':
-    print(my_sort(['price', 'name', 'make', 'mode', 'url']))
-    getProxyConfig("proxy_user")
+    print(my_sort(['price', 'name','pic', 'make', 'mode', 'url']))
   

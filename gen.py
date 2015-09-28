@@ -3,7 +3,7 @@
 
 # RH CREATED 20150801
 
-import urllib.request, asyncio ,aiohttp  
+import urllib.request, asyncio ,aiohttp
 from doxls import write_excel   
 import time
 from html.parser import HTMLParser
@@ -35,6 +35,7 @@ class MyParser(HTMLParser):
         self._name_list = []
         self._price_list = []
         self._url_list = []
+        self._pic_list = []
         self._make = make
         self._mode = mode
 
@@ -50,7 +51,9 @@ class MyParser(HTMLParser):
         pass
 
     def handle_startendtag(self, tag, attrs):
-        pass
+        if tag == 'img':
+            if ('width','96') in attrs:
+                self._pic_list.append(attrs[3][1])
 
     def handle_comment(self, data):
         pass
@@ -77,16 +80,30 @@ class MyParser(HTMLParser):
         i = 0
         while i < len(self._name_list):
             dict_carinfo = {'make': self._make, 'mode': self._mode, 'name': self._name_list[i],
-                            'price': self._price_list[i], 'url': self._url_list[i]}
+                            'price': self._price_list[i], 'url': self._url_list[i], 'pic': self._pic_list[i]}
             list_result.append(dict_carinfo)
             i += 1
 
+@asyncio.coroutine
+def getPicture(url):
+    print("getting picture")
+
+    if getProxyConfig("enable") == "1":
+        # THE PROXY INFO
+        proxy_uri = getProxyConfig('server')
+        proxy_user = getProxyConfig('user')
+        proxy_pwd = getProxyConfig('password')
+        proxy_sever = 'http://'+proxy_uri
+        conn = aiohttp.ProxyConnector(proxy=proxy_sever, proxy_auth=aiohttp.BasicAuth(proxy_user, proxy_pwd))
+        response = yield from aiohttp.get(url, connector=conn)
+    else:
+        response = yield from aiohttp.get(url)
+    return (yield  from  response.read())
 
 @asyncio.coroutine
 def getCarInfo(query_car):
     print("fetching %s-%s" % (query_car['make'], query_car['mode']))
 
-    # OPEN THE HOME PAGE OF LIAO'S PATHON TUTORIAL
     url = "http://wwwa.autotrader.ca/cars/%s/%s/on/toronto/?prx=100&prv=Ontario&loc=Toronto" \
           % (query_car['make'],query_car['mode']) + \
           "%2c+ON&body=SUV&sts=New&showcpo=1&hprc=True&wcp=True&srt=3&rcs=0&rcp=20"
@@ -112,6 +129,14 @@ def process(query_car):
     myparse.merge()
     print("gen data complete[%s-%s]" % (query_car["make"], query_car["mode"]))
 
+    ''' not effective
+    #update 'pic' content to binary
+    for car in list_result:
+        pic= yield from getPicture(car['pic'])
+        print(pic)
+        car['pic']=pic
+    '''
+
 
 def execute():
     loop = asyncio.get_event_loop()
@@ -128,6 +153,8 @@ def execute():
     print("gen xls completed")
 
 
+
+
 if __name__ == '__main__':
 
     start = time.clock()
@@ -135,4 +162,3 @@ if __name__ == '__main__':
     execute()
     end = time.clock()
     print("cost: %f s" % (end - start))
-
